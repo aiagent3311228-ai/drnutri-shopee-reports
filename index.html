@@ -12,6 +12,7 @@ header { background: linear-gradient(135deg, var(--primary), #2980b9); color: wh
 header h1 { font-size: 2.2em; margin-bottom: 8px; }
 header p { opacity: 0.9; font-size: 1.1em; }
 .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+.section-title { font-size: 1.3em; color: var(--primary); margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 2px solid #eee; }
 .report-list { list-style: none; }
 .report-list li { margin-bottom: 16px; }
 .report-list a {
@@ -22,6 +23,7 @@ header p { opacity: 0.9; font-size: 1.1em; }
 }
 .report-list a:hover { transform: translateX(8px); box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
 .report-list .date { font-size: 0.8em; color: #95a5a6; font-weight: 400; margin-top: 4px; }
+.report-list a.trend { border-left-color: #e67e22; }
 footer { text-align: center; padding: 40px; color: #95a5a6; font-size: 0.85em; }
 </style>
 </head>
@@ -31,11 +33,16 @@ footer { text-align: center; padding: 40px; color: #95a5a6; font-size: 0.85em; }
   <p>Dr.Nutri Monthly Shopee Reports</p>
 </header>
 <div class="container">
+  <h2 class="section-title">趨勢分析報告</h2>
+  <ul class="report-list">
+    <li><a href="reports/shopee-6month-trend-2025Q4-2026Q1.html" class="trend">6 個月趨勢分析（2025年9月 — 2026年2月）<div class="date">報告產出：2026-03-15</div></a></li>
+  </ul>
+
+  <h2 class="section-title">月度營運分析</h2>
   <ul class="report-list">
     <!-- 最新月份放最上面 -->
-    <li><a href="reports/2026-02.html">2026 年 2 月 蝦皮營運分析<div class="date">報告產出：2026-03-15</div></a></li>
+    <li><a href="reports/2026-02.html">2026 年 2 月 蝦皮營運分析<div class="date">報告產出：2026-03-12</div></a></li>
     <li><a href="reports/2026-01.html">2026 年 1 月 蝦皮營運分析<div class="date">報告產出：2026-03-15</div></a></li>
-    <!-- <li><a href="reports/2026-03.html">2026 年 3 月 蝦皮營運分析<div class="date">報告產出：2026-04-XX</div></a></li> -->
   </ul>
 </div>
 <footer>芯漾生醫 Dr.Nutri ｜ Powered by Claude</footer>
