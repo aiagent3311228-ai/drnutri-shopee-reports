@@ -1,43 +1,495 @@
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>芯漾生醫 蝦皮營運分析報告</title>
+<title>芯漾生醫 2026年2月 蝦皮營運分析報告</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root { --primary: #1a5276; --accent: #2ecc71; }
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif; background: #f8f9fa; color: #2c3e50; }
-header { background: linear-gradient(135deg, var(--primary), #2980b9); color: white; padding: 60px 20px; text-align: center; }
-header h1 { font-size: 2.2em; margin-bottom: 8px; }
-header p { opacity: 0.9; font-size: 1.1em; }
-.container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
-.report-list { list-style: none; }
-.report-list li { margin-bottom: 16px; }
-.report-list a {
-  display: block; padding: 24px; background: white; border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-decoration: none; color: var(--primary);
-  font-size: 1.2em; font-weight: 600; transition: all 0.2s;
-  border-left: 4px solid var(--primary);
+:root {
+  --primary: #1a5276;
+  --accent: #2ecc71;
+  --danger: #e74c3c;
+  --warn: #f39c12;
+  --bg: #f8f9fa;
+  --card: #ffffff;
+  --text: #2c3e50;
+  --border: #e0e0e0;
 }
-.report-list a:hover { transform: translateX(8px); box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
-.report-list .date { font-size: 0.8em; color: #95a5a6; font-weight: 400; margin-top: 4px; }
-footer { text-align: center; padding: 40px; color: #95a5a6; font-size: 0.85em; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+.container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+header { background: linear-gradient(135deg, var(--primary), #2980b9); color: white; padding: 40px 0; text-align: center; }
+header h1 { font-size: 2em; margin-bottom: 8px; }
+header p { opacity: 0.9; font-size: 1.1em; }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 24px 0; }
+.kpi-card { background: var(--card); border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-left: 4px solid var(--primary); }
+.kpi-card .label { font-size: 0.85em; color: #7f8c8d; margin-bottom: 4px; }
+.kpi-card .value { font-size: 1.8em; font-weight: 700; color: var(--primary); }
+.kpi-card .sub { font-size: 0.8em; color: #95a5a6; margin-top: 4px; }
+.section { background: var(--card); border-radius: 12px; padding: 28px; margin: 24px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.section h2 { color: var(--primary); font-size: 1.4em; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--primary); }
+.section h3 { color: var(--primary); font-size: 1.1em; margin: 16px 0 8px; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.9em; }
+th { background: var(--primary); color: white; padding: 10px 8px; text-align: left; font-weight: 600; }
+td { padding: 8px; border-bottom: 1px solid var(--border); }
+tr:hover { background: #f0f7ff; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; font-weight: 600; }
+.badge-success { background: #d5f5e3; color: #27ae60; }
+.badge-danger { background: #fadbd8; color: #e74c3c; }
+.badge-warn { background: #fef9e7; color: #f39c12; }
+.chart-container { position: relative; height: 320px; margin: 16px 0; }
+.insight-box { background: #eaf2f8; border-left: 4px solid #3498db; padding: 16px; border-radius: 0 8px 8px 0; margin: 16px 0; }
+.alert-box { background: #fdf2e9; border-left: 4px solid var(--warn); padding: 16px; border-radius: 0 8px 8px 0; margin: 16px 0; }
+.action-box { background: #eafaf1; border-left: 4px solid var(--accent); padding: 16px; border-radius: 0 8px 8px 0; margin: 16px 0; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+.tag { display: inline-block; background: #eaf2f8; color: var(--primary); padding: 2px 8px; border-radius: 4px; font-size: 0.8em; margin: 2px; }
+footer { text-align: center; padding: 30px; color: #95a5a6; font-size: 0.85em; }
 </style>
 </head>
 <body>
+
 <header>
-  <h1>芯漾生醫 蝦皮營運分析</h1>
-  <p>Dr.Nutri Monthly Shopee Reports</p>
+  <h1>芯漾生醫 蝦皮營運分析報告</h1>
+  <p>2026 年 2 月 1 日 — 2 月 28 日</p>
 </header>
+
 <div class="container">
-  <ul class="report-list">
-    <!-- 每月新增一行即可 -->
-    <li><a href="reports/2026-02.html">2026 年 2 月 蝦皮營運分析<div class="date">報告產出：2026-03-15</div></a></li>
-    <!-- <li><a href="reports/2026-03.html">2026 年 3 月 蝦皮營運分析<div class="date">報告產出：2026-04-XX</div></a></li> -->
-  </ul>
+
+<!-- KPI Overview -->
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="label">月營收（可出貨）</div>
+    <div class="value">$286,063</div>
+    <div class="sub">下單金額 $289,625</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">總訂單數</div>
+    <div class="value">142</div>
+    <div class="sub">可出貨 133 筆 ｜ 不成立 9 筆</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">不重複買家數</div>
+    <div class="value">124</div>
+    <div class="sub">新買家 56 ｜ 舊買家 68</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">客單價</div>
+    <div class="value">$2,307</div>
+    <div class="sub">平均訂單金額 $2,040</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">總訪客數</div>
+    <div class="value">1,954</div>
+    <div class="sub">日均 70 人</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">轉換率</div>
+    <div class="value">6.35%</div>
+    <div class="sub">下單→可出貨 100%</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">回購率</div>
+    <div class="value">8.87%</div>
+    <div class="sub">舊買家佔比 54.8%</div>
+  </div>
+  <div class="kpi-card">
+    <div class="label">不成立訂單金額</div>
+    <div class="value" style="color:var(--danger)">$32,280</div>
+    <div class="sub">佔下單金額 11.1%</div>
+  </div>
 </div>
-<footer>芯漾生醫 Dr.Nutri ｜ Powered by Claude</footer>
+
+<!-- Section 1: Sales Trend -->
+<div class="section">
+  <h2>一、每日銷售趨勢</h2>
+  <div class="chart-container"><canvas id="dailySalesChart"></canvas></div>
+  
+  <div class="two-col">
+    <div>
+      <h3>Top 5 銷售日</h3>
+      <table>
+        <tr><th>日期</th><th>銷售額</th><th>訂單</th><th>訪客</th></tr>
+        <tr><td>2/2（一）</td><td><b>$51,289</b></td><td>27</td><td>101</td></tr>
+        <tr><td>2/26（四）</td><td>$22,714</td><td>10</td><td>124</td></tr>
+        <tr><td>2/18（三）</td><td>$22,595</td><td>8</td><td>88</td></tr>
+        <tr><td>2/24（二）</td><td>$21,651</td><td>5</td><td>65</td></tr>
+        <tr><td>2/22（日）</td><td>$19,429</td><td>11</td><td>100</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>異常觀察</h3>
+      <div class="alert-box">
+        <b>2 天零銷售：</b>2/13（五）67 訪客、2/16（一）52 訪客——有流量卻零成交，需排查頁面問題或庫存狀態。
+      </div>
+      <div class="alert-box">
+        <b>2/2 爆單日：</b>單日 $51,289 佔整月 17.7%，轉換率高達 21.78%，推測有活動或推廣帶動。
+      </div>
+      <div class="insight-box">
+        <b>不成立訂單 9 筆（$32,280）：</b>佔下單金額 11.1%，其中 2/24 單日取消 $9,894 最高，需關注取消原因。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 2: Weekly Pattern -->
+<div class="section">
+  <h2>二、星期別銷售規律</h2>
+  <div class="chart-container"><canvas id="weeklyChart"></canvas></div>
+  <div class="insight-box">
+    <b>觀察：</b>週一平均銷售 $19,302 顯著高於其他日（主因 2/2 爆單拉高），週五、週六為低谷。週日回升至 $9,683，可考慮在週末安排促銷活動提升轉換。
+  </div>
+</div>
+
+<!-- Section 3: Product Ranking -->
+<div class="section">
+  <h2>三、商品銷售排行</h2>
+  <div class="chart-container" style="height:380px"><canvas id="productChart"></canvas></div>
+  <table>
+    <tr><th>#</th><th>商品</th><th>銷售額</th><th>佔比</th><th>件數</th><th>轉換率</th><th>回購率</th></tr>
+    <tr><td>1</td><td>胺基酸鎂 120粒</td><td><b>$51,619</b></td><td>17.8%</td><td>32</td><td>15.46%</td><td>15.62%</td></tr>
+    <tr><td>2</td><td>酵母鋅 120粒</td><td>$28,757</td><td>9.9%</td><td>21</td><td>12.18%</td><td>0%</td></tr>
+    <tr><td>3</td><td>硒酵母 60粒</td><td>$26,071</td><td>9.0%</td><td>28</td><td>6.05%</td><td>7.69%</td></tr>
+    <tr><td>4</td><td>晶漾葉黃素 30粒</td><td>$24,449</td><td>8.4%</td><td>13</td><td>23.40%</td><td>27.27%</td></tr>
+    <tr><td>5</td><td>綜合B群 120粒</td><td>$20,097</td><td>6.9%</td><td>6</td><td>0.85%</td><td>0%</td></tr>
+    <tr><td>6</td><td>海藻鈣 180錠</td><td>$16,165</td><td>5.6%</td><td>6</td><td>2.00%</td><td>33.33%</td></tr>
+    <tr><td>7</td><td>胺基酸鎂 30粒鋁袋</td><td>$13,746</td><td>4.7%</td><td>17</td><td>11.11%</td><td>0%</td></tr>
+    <tr><td>8</td><td>薑黃複合膠囊</td><td>$10,641</td><td>3.7%</td><td>8</td><td>1.68%</td><td>14.29%</td></tr>
+    <tr><td>9</td><td>晚安膠囊 GABA</td><td>$10,247</td><td>3.5%</td><td>7</td><td>9.86%</td><td>0%</td></tr>
+    <tr><td>10</td><td>PureWay-C 維生素C</td><td>$9,878</td><td>3.4%</td><td>6</td><td>9.80%</td><td>0%</td></tr>
+  </table>
+  <p style="color:#7f8c8d;font-size:0.85em;margin-top:8px;">Top 10 商品合計 $211,670，佔總銷售額 73.1%</p>
+  
+  <div class="two-col" style="margin-top:20px">
+    <div class="insight-box">
+      <b>明星商品：胺基酸鎂</b> — 120粒+30粒兩規格合計 $65,365（22.6%），是絕對主力。轉換率 11~15%，回購率 15.62% 均表現優異。
+    </div>
+    <div class="insight-box">
+      <b>高轉換率之星：晶漾葉黃素</b> — 轉換率 23.40% 為全店最高，回購率 27.27% 也是前段班，但訪客僅 32 人，值得加大曝光。
+    </div>
+  </div>
+  
+  <div class="alert-box">
+    <b>低轉換警示：綜合B群</b> — 訪客 356 人（全店第二高）但轉換率僅 0.85%，銷售與流量極不匹配。建議優化商品頁面、調整價格策略或增加促銷力道。
+  </div>
+</div>
+
+<!-- Section 4: Traffic Analysis -->
+<div class="section">
+  <h2>四、流量分析</h2>
+  <div class="chart-container"><canvas id="trafficChart"></canvas></div>
+  
+  <div class="two-col">
+    <div>
+      <h3>流量摘要</h3>
+      <table>
+        <tr><td>總頁面瀏覽數</td><td><b>5,535</b></td></tr>
+        <tr><td>不重複訪客</td><td>1,717</td></tr>
+        <tr><td>新訪客</td><td>1,256（73.2%）</td></tr>
+        <tr><td>既有訪客</td><td>461（26.8%）</td></tr>
+        <tr><td>平均頁面瀏覽次數</td><td>3.22 頁</td></tr>
+        <tr><td>平均停留時間</td><td>1 分 11 秒</td></tr>
+        <tr><td>頁面跳出率</td><td>32.85%</td></tr>
+        <tr><td>新增粉絲</td><td>+5 人</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>商品曝光 vs 點擊 Top 5</h3>
+      <table>
+        <tr><th>商品</th><th>曝光</th><th>點擊</th><th>點擊率</th></tr>
+        <tr><td>B群</td><td>31,238</td><td>462</td><td>1.48%</td></tr>
+        <tr><td>硒酵母</td><td>19,180</td><td>423</td><td>2.21%</td></tr>
+        <tr><td>鎂 120粒</td><td>4,838</td><td>202</td><td>4.18%</td></tr>
+        <tr><td>鋅 120粒</td><td>4,364</td><td>156</td><td>3.57%</td></tr>
+        <tr><td>葉黃素</td><td>1,212</td><td>47</td><td>3.88%</td></tr>
+      </table>
+      <div class="alert-box">
+        <b>B群曝光 31K 但點擊率僅 1.48%</b>，主圖或標題吸引力不足，是全店最大的流量漏斗痛點。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 5: Transaction Composition -->
+<div class="section">
+  <h2>五、交易組成分析</h2>
+  <div class="two-col">
+    <div>
+      <h3>訂單價格帶分佈</h3>
+      <div class="chart-container" style="height:260px"><canvas id="priceChart"></canvas></div>
+      <table>
+        <tr><th>價格帶</th><th>買家</th><th>佔比</th><th>銷售額</th><th>轉換率</th></tr>
+        <tr><td>$0 ~ $497</td><td>11</td><td>8.9%</td><td>$4,412</td><td>5.05%</td></tr>
+        <tr><td>$497 ~ $1,590</td><td><b>63</b></td><td><b>50.8%</b></td><td>$73,309</td><td>6.03%</td></tr>
+        <tr><td>$1,590 ~ $2,683</td><td>26</td><td>21.0%</td><td>$57,881</td><td>1.72%</td></tr>
+        <tr><td>$2,683 以上</td><td>29</td><td>23.4%</td><td><b>$154,023</b></td><td>1.91%</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>買家類型分佈</h3>
+      <div class="chart-container" style="height:260px"><canvas id="buyerChart"></canvas></div>
+      <table>
+        <tr><th>類型</th><th>買家</th><th>佔比</th><th>銷售額</th><th>轉換率</th></tr>
+        <tr><td>新買家</td><td>56</td><td>45.2%</td><td>$96,493 (33.3%)</td><td>5.09%</td></tr>
+        <tr><td>既有買家</td><td><b>68</b></td><td><b>54.8%</b></td><td><b>$193,132 (66.7%)</b></td><td>4.32%</td></tr>
+      </table>
+      <div class="insight-box">
+        <b>既有買家貢獻 66.7% 營收</b>，人均消費 $2,840 遠高於新買家 $1,723。忠誠客戶是核心收入來源。
+      </div>
+    </div>
+  </div>
+  <div class="insight-box">
+    <b>高客單價帶（$2,683+）雖佔比 23.4%，卻貢獻 53.2% 營收（$154,023）</b>，代表組合包或大量購買策略有效。但此價格帶轉換率僅 1.91%，可透過滿額折扣、限時優惠等方式提升轉換。
+  </div>
+</div>
+
+<!-- Section 6: Brand Members -->
+<div class="section">
+  <h2>六、品牌會員分析</h2>
+  <div class="two-col">
+    <div>
+      <h3>會員概覽</h3>
+      <table>
+        <tr><td>會員總數</td><td><b>93 人</b></td></tr>
+        <tr><td>新增會員</td><td>8 人（8.6%）</td></tr>
+        <tr><td>會員銷售額</td><td>$28,440（佔總營收 9.82%）</td></tr>
+        <tr><td>會員訂單數</td><td>12 筆（佔 8.45%）</td></tr>
+        <tr><td>會員買家數</td><td>11 人（佔 8.87%）</td></tr>
+        <tr><td>會員不重複訪客</td><td>38 人（佔 2.10%）</td></tr>
+      </table>
+      <h3 style="margin-top:16px">會員 vs 非會員</h3>
+      <table>
+        <tr><th>指標</th><th>會員</th><th>非會員</th></tr>
+        <tr><td>平均客單金額</td><td><b>$2,585</b></td><td>$2,311</td></tr>
+        <tr><td>平均訂單金額</td><td><b>$2,370</b></td><td>$2,009</td></tr>
+        <tr><td>回購率</td><td><b style="color:var(--accent)">27.27%</b></td><td>7.08%</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>會員等級分佈</h3>
+      <div class="chart-container" style="height:260px"><canvas id="memberChart"></canvas></div>
+      <table>
+        <tr><th>等級</th><th>人數</th><th>銷售額</th><th>佔比</th></tr>
+        <tr><td>入門會員</td><td>55（59.1%）</td><td>$3,954</td><td>13.9%</td></tr>
+        <tr><td>銀芯VIP</td><td>13（14.0%）</td><td>$5,020</td><td>17.7%</td></tr>
+        <tr><td>金芯VIP</td><td>12（12.9%）</td><td><b>$12,349</b></td><td><b>43.4%</b></td></tr>
+        <tr><td>鑽芯VIP</td><td>13（14.0%）</td><td>$7,117</td><td>25.0%</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="insight-box">
+    <b>會員回購率 27.27% 是非會員的 3.85 倍</b>，但會員僅貢獻 9.82% 營收。關鍵問題：會員訪店率極低（僅 38/93 = 40.8% 回訪），需加強會員喚回機制（EDM、專屬優惠）。
+  </div>
+  <div class="insight-box">
+    <b>金芯VIP 是黃金族群</b> — 僅 12 人卻貢獻 $12,349（43.4% 會員營收），人均消費最高。建議針對此族群提供專屬服務與升等獎勵。
+  </div>
+</div>
+
+<!-- Section 7: Zero Sales Products -->
+<div class="section">
+  <h2>七、零銷售商品觀察</h2>
+  <p>本月有 <b>28 個商品零銷售</b>（佔 59 個商品的 47.5%），其中：</p>
+  <div class="two-col" style="margin-top:12px">
+    <div>
+      <h3>有流量卻零成交（需優化）</h3>
+      <table>
+        <tr><th>商品</th><th>訪客</th></tr>
+        <tr><td>鈣鎂D骨本守護組</td><td>17</td></tr>
+        <tr><td>B群（另一規格 / 福利品）</td><td>14</td></tr>
+        <tr><td>飽飽雙纖膠囊</td><td>12</td></tr>
+        <tr><td>飽足感 Fiber</td><td>10</td></tr>
+        <tr><td>贈品試吃包</td><td>10</td></tr>
+        <tr><td>胺基酸鎂 睡鎂人組</td><td>8</td></tr>
+        <tr><td>優立 GOplus</td><td>8</td></tr>
+        <tr><td>鎂夢好骨本組</td><td>8</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>幾乎零流量（需增加曝光）</h3>
+      <table>
+        <tr><th>商品</th><th>訪客</th></tr>
+        <tr><td>高濃度魚油 Omega3</td><td>0</td></tr>
+        <tr><td>珊瑚鈣</td><td>0</td></tr>
+        <tr><td>福利品 消化酵素</td><td>0</td></tr>
+        <tr><td>福利品 雪淬</td><td>0</td></tr>
+        <tr><td>福利品 B群</td><td>0</td></tr>
+        <tr><td>骨骼保健組</td><td>0</td></tr>
+      </table>
+      <div class="alert-box">
+        多個組合包完全無曝光，建議評估是否下架或重新包裝上架。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 8: Actionable Insights -->
+<div class="section">
+  <h2>八、策略建議與行動方案</h2>
+  
+  <div class="action-box">
+    <h3>1. 放大明星商品 — 胺基酸鎂</h3>
+    <p>佔總營收 22.6%，轉換率與回購率雙高。建議加大廣告投放、設定為首頁推薦、搭配組合包（鎂+GABA 睡眠組）提升客單價。</p>
+  </div>
+  
+  <div class="action-box">
+    <h3>2. 搶救 B群轉換率</h3>
+    <p>B群曝光 31K 為全店最高但點擊率 1.48%、轉換率 0.85%。立即行動：重拍主圖、優化標題關鍵字、加入限時折扣標籤、增加評價與曬圖。</p>
+  </div>
+  
+  <div class="action-box">
+    <h3>3. 擴大葉黃素曝光</h3>
+    <p>轉換率 23.4% 為全店最高，但訪客僅 32 人。應加入蝦皮廣告投放、設為關聯推薦商品，以高轉換率驅動更多銷售。</p>
+  </div>
+  
+  <div class="action-box">
+    <h3>4. 提升會員活躍度</h3>
+    <p>93 名會員中僅 38 人回訪（40.8%），但會員回購率是非會員 3.85 倍。建議每週發送會員專屬 EDM、設計積分兌換活動、金芯 VIP 專屬折扣。</p>
+  </div>
+  
+  <div class="action-box">
+    <h3>5. 降低取消訂單率</h3>
+    <p>不成立訂單 $32,280 佔 11.1%，需分析取消原因（付款逾時？缺貨？猶豫？），針對性改善：自動提醒付款、庫存管理優化、下單後即時確認訊息。</p>
+  </div>
+  
+  <div class="action-box">
+    <h3>6. 清理零銷售商品</h3>
+    <p>28 個零銷售商品佔近半。評估下架福利品與低效組合包，集中資源在有銷售潛力的品項上，避免分散流量。</p>
+  </div>
+  
+  <div class="action-box">
+    <h3>7. 週末促銷策略</h3>
+    <p>週五、六為銷售低谷。可在週五推出「週末限定優惠」或「限時免運」活動，搭配社群推播刺激週末消費。</p>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  芯漾生醫 Dr.Nutri ｜ 蝦皮月度營運分析 ｜ 報告產出日期：2026-03-15
+</footer>
+
+<script>
+// Daily Sales Chart
+const dailyCtx = document.getElementById('dailySalesChart').getContext('2d');
+new Chart(dailyCtx, {
+  type: 'bar',
+  data: {
+    labels: Array.from({length:28}, (_,i) => `2/${i+1}`),
+    datasets: [{
+      label: '銷售額 (TWD)',
+      data: [9915,51289,12392,6297,2215,4715,9342,2908,16133,8309,9719,9030,0,4776,6479,0,1113,22595,5615,10162,7307,19429,9787,21651,2579,22714,11154,2000],
+      backgroundColor: [9915,51289,12392,6297,2215,4715,9342,2908,16133,8309,9719,9030,0,4776,6479,0,1113,22595,5615,10162,7307,19429,9787,21651,2579,22714,11154,2000].map(v => v === 0 ? '#e74c3c' : v > 20000 ? '#2ecc71' : '#3498db'),
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `$${ctx.raw.toLocaleString()}` }}},
+    scales: { y: { ticks: { callback: v => `$${(v/1000).toFixed(0)}K` }}}
+  }
+});
+
+// Weekly Pattern Chart
+const weekCtx = document.getElementById('weeklyChart').getContext('2d');
+new Chart(weekCtx, {
+  type: 'bar',
+  data: {
+    labels: ['週一','週二','週三','週四','週五','週六','週日'],
+    datasets: [{
+      label: '平均銷售額',
+      data: [19302,10866,10298,9894,6508,5856,9683],
+      backgroundColor: '#3498db',
+      borderRadius: 6
+    },{
+      label: '平均訂單數 (x1000)',
+      data: [10000,4500,4750,4250,3500,2500,6000],
+      backgroundColor: '#2ecc71',
+      borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    scales: { y: { ticks: { callback: v => `$${(v/1000).toFixed(0)}K` }}}
+  }
+});
+
+// Product Chart
+const prodCtx = document.getElementById('productChart').getContext('2d');
+new Chart(prodCtx, {
+  type: 'bar',
+  data: {
+    labels: ['胺基酸鎂120粒','酵母鋅120粒','硒酵母','晶漾葉黃素','B群','海藻鈣','胺基酸鎂30粒','薑黃','晚安GABA','維生素C'],
+    datasets: [{
+      label: '銷售額 (TWD)',
+      data: [51619,28757,26071,24449,20097,16165,13746,10641,10247,9878],
+      backgroundColor: ['#1a5276','#2980b9','#3498db','#5dade2','#85c1e9','#aed6f1','#d4e6f1','#f39c12','#e67e22','#d35400'],
+      borderRadius: 4
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `$${ctx.raw.toLocaleString()}` }}},
+    scales: { x: { ticks: { callback: v => `$${(v/1000).toFixed(0)}K` }}}
+  }
+});
+
+// Price Band Chart
+const priceCtx = document.getElementById('priceChart').getContext('2d');
+new Chart(priceCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['$0~497','$497~1590','$1590~2683','$2683+'],
+    datasets: [{
+      data: [4412,73309,57881,154023],
+      backgroundColor: ['#85c1e9','#3498db','#2980b9','#1a5276']
+    }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: ctx => `$${ctx.raw.toLocaleString()} (${(ctx.raw/289625*100).toFixed(1)}%)` }}}}
+});
+
+// Buyer Type Chart
+const buyerCtx = document.getElementById('buyerChart').getContext('2d');
+new Chart(buyerCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['新買家','既有買家'],
+    datasets: [{
+      data: [96493,193132],
+      backgroundColor: ['#3498db','#1a5276']
+    }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: ctx => `$${ctx.raw.toLocaleString()} (${(ctx.raw/289625*100).toFixed(1)}%)` }}}}
+});
+
+// Member Level Chart
+const memCtx = document.getElementById('memberChart').getContext('2d');
+new Chart(memCtx, {
+  type: 'bar',
+  data: {
+    labels: ['入門會員','銀芯VIP','金芯VIP','鑽芯VIP'],
+    datasets: [{
+      label: '人數',
+      data: [55,13,12,13],
+      backgroundColor: '#85c1e9',
+      yAxisID: 'y'
+    },{
+      label: '銷售額',
+      data: [3954,5020,12349,7117],
+      backgroundColor: '#1a5276',
+      yAxisID: 'y1'
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    scales: {
+      y: { position: 'left', title: { display: true, text: '人數' }},
+      y1: { position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: '銷售額' }, ticks: { callback: v => `$${(v/1000).toFixed(0)}K` }}
+    }
+  }
+});
+</script>
+
 </body>
 </html>
